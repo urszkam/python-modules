@@ -28,4 +28,5 @@ def test_error_types() -> None:
     print("\nAll error types tested successfully!")
 
 
-test_error_types()
+if __name__ == "__main__":
+    test_error_types()
