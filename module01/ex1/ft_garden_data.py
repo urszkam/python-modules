@@ -1,14 +1,14 @@
 class Plant:
-    def __init__(self, name: str, height: int, age: int):
+    def __init__(self, name: str, height: int, age: int) -> None:
         self.name = name
         self.height = height
         self.age = age
 
-    def __str__(self):
+    def __str__(self) -> str:
         name = self.name.capitalize()
         return f"{name}: {self.height}cm, {self.age} days old"
 
-    def show(self):
+    def show(self) -> None:
         print(self)
 
 
