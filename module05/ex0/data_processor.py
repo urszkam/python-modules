@@ -3,7 +3,7 @@ from typing import Any
 
 
 class DataProcessor(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         self._data: list[str] = []
         self._rank = 0
 
@@ -23,10 +23,7 @@ class DataProcessor(ABC):
 
 
 class NumericProcessor(DataProcessor):
-    def validate(
-            self,
-            data: int | float | list[int] | list[float] | list[int | float]
-    ) -> bool:
+    def validate(self, data: Any) -> bool:
         match data:
             case bool():
                 return False
@@ -55,7 +52,7 @@ class NumericProcessor(DataProcessor):
 
 
 class TextProcessor(DataProcessor):
-    def validate(self, data: str | list[str]) -> bool:
+    def validate(self, data: Any) -> bool:
         match data:
             case str():
                 return True
@@ -76,7 +73,7 @@ class TextProcessor(DataProcessor):
 
 
 class LogProcessor(DataProcessor):
-    def validate(self, data: dict[str, str] | list[dict[str, str]]) -> bool:
+    def validate(self, data: Any) -> bool:
         match data:
             case dict() if all(
                 [isinstance(x, str) for x in [*data.keys(), *data.values()]]
@@ -94,20 +91,18 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Incorrect data input")
 
-        match data:
-            case dict():
-                self._data.append(str(
-                    f"{data['log_level']}: {data['log_message']}"
-                ))
-            case list():
-                self._data.extend([
+        logs = [data] if isinstance(data, dict) else data
+        for log in logs:
+            if "log_level" in log and "log_message" in log:
+                self._data.append(
                     f"{log['log_level']}: {log['log_message']}"
-                    for log in data
-                ])
+                )
+            else:
+                self._data.append(str(log))
 
 
 if __name__ == "__main__":
-    print("=== Code Nexus - Data Processor ===")
+    print("=== Code Nexus - Data Processor ===\n")
     num_proc = NumericProcessor()
     txt_proc = TextProcessor()
     log_proc = LogProcessor()
@@ -129,7 +124,7 @@ if __name__ == "__main__":
         rank, val = num_proc.output()
         print(f" Numeric value {rank}: {val}")
 
-    print("Testing Text Processor...")
+    print("\nTesting Text Processor...")
     print(f" Trying to validate input '42': {txt_proc.validate(42)}")
     txt_data = ["Hello", "Nexus", "World"]
     print(f" Processing data: {txt_data}")
@@ -139,7 +134,7 @@ if __name__ == "__main__":
         rank, val = txt_proc.output()
         print(f" Text value {rank}: {val}")
 
-    print("Testing Log Processor...")
+    print("\nTesting Log Processor...")
     print(f" Trying to validate input 'Hello': {log_proc.validate('Hello')}")
     log_data = [
         {'log_level': 'NOTICE', 'log_message': 'Connection to server'},
