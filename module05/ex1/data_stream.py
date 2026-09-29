@@ -96,39 +96,28 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Incorrect data input")
 
-        match data:
-            case dict():
-                self._data.append(str(
-                    f"{data['log_level']}: {data['log_message']}"
-                ))
-            case list():
-                self._data.extend([
+        logs = [data] if isinstance(data, dict) else data
+        for log in logs:
+            if "log_level" in log and "log_message" in log:
+                self._data.append(
                     f"{log['log_level']}: {log['log_message']}"
-                    for log in data
-                ])
+                )
+            else:
+                self._data.append(str(log))
 
 
 class DataStream():
     def __init__(self) -> None:
-        self._processors: dict[str, DataProcessor | None] = {
-            "Numeric": None,
-            "Text": None,
-            "Log": None
-        }
+        self._processors: dict[str, DataProcessor] = {}
 
     def register_processor(self, proc: DataProcessor) -> None:
-        match proc:
-            case NumericProcessor():
-                self._processors["Numeric"] = proc
-            case TextProcessor():
-                self._processors["Text"] = proc
-            case LogProcessor():
-                self._processors["Log"] = proc
+        name = proc.__class__.__name__.removesuffix("Processor")
+        self._processors[name] = proc
 
     def process_stream(self, stream: list[Any]) -> None:
         for data in stream:
             for proc in self._processors.values():
-                if proc and proc.validate(data):
+                if proc.validate(data):
                     proc.ingest(data)
                     break
             else:
@@ -139,30 +128,20 @@ class DataStream():
 
     def print_processors_stats(self) -> None:
         print("== DataStream statistics ==")
-        if not any(self._processors.values()):
+        if not self._processors:
             print("No processor found, no data\n")
             return
 
         for name, proc in self._processors.items():
-            if proc:
-                total, remaining = proc.get_stats()
-                print(
-                    f"{name} Processor: total {total} items processed, " +
-                    f"remaining {remaining} on processor"
-                )
+            total, remaining = proc.get_stats()
+            print(
+                f"{name} Processor: total {total} items processed, " +
+                f"remaining {remaining} on processor"
+            )
         print()
 
-    def output_numeric_element(self) -> None:
-        if proc := self._processors["Numeric"]:
-            proc.output()
-
-    def output_text_element(self) -> None:
-        if proc := self._processors["Text"]:
-            proc.output()
-
-    def output_log_element(self) -> None:
-        if proc := self._processors["Log"]:
-            proc.output()
+    def output_element(self, name: str) -> tuple[int, str]:
+        return self._processors[name].output()
 
 
 if __name__ == "__main__":
@@ -180,7 +159,7 @@ if __name__ == "__main__":
         [
             {"log_level": "WARNING",
              "log_message": "Telnet access! Use ssh instead"},
-            {'log_level': 'INFO', 'log_message': 'User wil isconnected'}
+            {'log_level': 'INFO', 'log_message': 'User wil is connected'}
         ],
         42,
         ['Hi', 'five']
@@ -200,8 +179,8 @@ if __name__ == "__main__":
     print("Consume some elements from the data processors:" +
           "Numeric 3, Text 2, Log 1")
     for _ in range(3):
-        stream.output_numeric_element()
+        stream.output_element("Numeric")
     for _ in range(2):
-        stream.output_text_element()
-    stream.output_log_element()
+        stream.output_element("Text")
+    stream.output_element("Log")
     stream.print_processors_stats()
