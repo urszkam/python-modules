@@ -20,7 +20,7 @@ class Plant:
             )
         else:
             self._height = height if height >= 0 else 0
-    
+
     def get_age(self) -> int:
         return self._age
 
@@ -46,16 +46,16 @@ if __name__ == "__main__":
     plant = Plant("Rose", 20, 40)
     print("Plant created: ", end="")
     plant.show()
-    
+
     plant.set_height(25)
     print(f"Height updated: {plant.get_height()}cm")
     plant.set_age(30)
     print(f"Age updated: {plant.get_age()} days")
 
     plant.set_height(-25)
-    print(f"Height update rejected")
+    print("Height update rejected")
     plant.set_age(-30)
-    print(f"Age update rejected")
+    print("Age update rejected")
 
     print("Current state: ", end="")
     plant.show()
