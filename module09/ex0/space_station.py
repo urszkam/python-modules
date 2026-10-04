@@ -26,7 +26,7 @@ def main() -> None:
         "last_maintenance": datetime.now(),
         "is_operational": True
     }
-    station = SpaceStation(**station_data)
+    station = SpaceStation.model_validate(station_data)
     print(f"ID: {station.station_id}")
     print(f"Name: {station.name}")
     print(f"Crew: {station.crew_size} people")
@@ -38,7 +38,7 @@ def main() -> None:
     print("Expected validation error:")
     station_data["crew_size"] = 22
     try:
-        SpaceStation(**station_data)
+        SpaceStation.model_validate(station_data)
     except ValidationError as e:
         for err in e.errors():
             print(err["msg"])
