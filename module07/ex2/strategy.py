@@ -24,7 +24,7 @@ class BattleStrategy(ABC):
 
 
 class NormalStrategy(BattleStrategy):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("normal")
 
     def is_valid(self, creature: Creature) -> bool:
@@ -37,7 +37,7 @@ class NormalStrategy(BattleStrategy):
 
 
 class AggressiveStrategy(BattleStrategy):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("aggressive")
 
     def is_valid(self, creature: Creature) -> bool:
@@ -52,7 +52,7 @@ class AggressiveStrategy(BattleStrategy):
 
 
 class DefensiveStrategy(BattleStrategy):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("defensive")
 
     def is_valid(self, creature: Creature) -> bool:
