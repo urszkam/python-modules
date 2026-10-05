@@ -19,7 +19,7 @@ def _read_file_content(file: str) -> str:
         return content
     finally:
         fd.close()
-        print(f"File {file} closed.\n")
+        print(f"File '{file}' closed.\n")
 
 
 def _print_content(content: str) -> None:
@@ -73,7 +73,7 @@ def create_archive(
     file_name: str = files_list[0].strip()
 
     print("=== Cyber Archives Recovery ===")
-    print(f"Accessing file {file_name}")
+    print(f"Accessing file '{file_name}'")
 
     try:
         content: str = _read_file_content(file_name)

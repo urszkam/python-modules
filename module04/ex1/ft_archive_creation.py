@@ -16,7 +16,7 @@ def _read_file_content(file: str) -> str:
         raise
     finally:
         fd.close()
-        print(f"File {file} closed.")
+        print(f"File '{file}' closed.")
 
 
 def _print_content(content: str) -> None:
@@ -35,6 +35,8 @@ def _transform_content(content: str) -> str:
 
 
 def _save_file(content: str, file_name: str) -> None:
+    print(f"Saving data to '{file_name}'")
+
     try:
         fd: IO[str] = open(file_name, "w", encoding="utf-8")
     except OSError as e:
@@ -44,8 +46,8 @@ def _save_file(content: str, file_name: str) -> None:
 
     try:
         fd.write(content)
-    except OSError as error:
-        print(f"Error writing file '{file_name}': {error}")
+    except OSError as e:
+        print(f"Error saving data '{file_name}': {e}")
         print("Data not saved.")
     else:
         print(f"Data saved in file '{file_name}'.")
@@ -64,7 +66,7 @@ def create_archive(
     file_name: str = files_list[0]
 
     print("=== Cyber Archives Recovery ===")
-    print(f"Accessing file {file_name}")
+    print(f"Accessing file '{file_name}'")
 
     try:
         content: str = _read_file_content(file_name)

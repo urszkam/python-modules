@@ -13,7 +13,7 @@ def read_file(
     file_name: str = files_list[0]
 
     print("=== Cyber Archives Recovery ===")
-    print(f"Accessing file {file_name}")
+    print(f"Accessing file '{file_name}'")
 
     try:
         fd: IO[str] = open(file_name, "r", encoding="utf-8")
@@ -30,7 +30,7 @@ def read_file(
         return
     finally:
         fd.close()
-        print(f"File {file_name} closed.")
+        print(f"File '{file_name}' closed.")
 
 
 if __name__ == "__main__":
