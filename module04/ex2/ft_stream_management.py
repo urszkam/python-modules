@@ -11,7 +11,7 @@ def _read_file_content(file: str) -> str:
 
     try:
         content = fd.read()
-    except OSError as e:
+    except (OSError, UnicodeDecodeError) as e:
         print(f"[STDERR] Error reading file '{file}': {e}", file=sys.stderr)
         raise
     else:
@@ -66,18 +66,18 @@ def create_archive(
     executable_name: str,
     files_list: list[str]
 ) -> None:
-    if len(files_list) != 1 or not files_list[0].strip():
+    if len(files_list) != 1:
         print(f"Usage: {executable_name} <file>")
         return
 
-    file_name: str = files_list[0].strip()
+    file_name: str = files_list[0]
 
     print("=== Cyber Archives Recovery ===")
     print(f"Accessing file '{file_name}'")
 
     try:
         content: str = _read_file_content(file_name)
-    except OSError:
+    except (OSError, UnicodeDecodeError):
         return
 
     print("Transform data:")

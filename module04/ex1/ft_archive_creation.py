@@ -11,7 +11,7 @@ def _read_file_content(file: str) -> str:
 
     try:
         return fd.read()
-    except OSError as e:
+    except (OSError, UnicodeDecodeError) as e:
         print(f"Error reading file '{file}': {e}")
         raise
     finally:
@@ -70,7 +70,7 @@ def create_archive(
 
     try:
         content: str = _read_file_content(file_name)
-    except OSError:
+    except (OSError, UnicodeDecodeError):
         return
 
     _print_content(content)

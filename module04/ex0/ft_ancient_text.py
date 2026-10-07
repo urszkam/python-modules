@@ -25,7 +25,7 @@ def read_file(
         print("---\n")
         print(fd.read())
         print("\n---")
-    except OSError as e:
+    except (OSError, UnicodeDecodeError) as e:
         print(f"Error reading file '{file_name}': {e}")
         return
     finally:
