@@ -1,4 +1,9 @@
+import json
+import os
+import random
+
 from datetime import datetime
+
 from pydantic import BaseModel, Field, ValidationError
 
 
@@ -17,16 +22,18 @@ def main() -> None:
     print("Space Station Data Validation")
     print("========================================\n")
     print("Valid station created:")
-    station_data = {
-        "station_id": "ISS001",
-        "name": "International Space Station",
-        "crew_size": 6,
-        "power_level": 85.5,
-        "oxygen_level": 92.3,
-        "last_maintenance": datetime.now(),
-        "is_operational": True
-    }
-    station = SpaceStation.model_validate(station_data)
+    module_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    data_path = os.path.join(
+        module_dir, "generated_data", "space_stations.json"
+    )
+    try:
+        with open(data_path, encoding="utf-8") as file:
+            stations = json.load(file)
+        station_data = random.choice(stations)
+        station = SpaceStation.model_validate(station_data)
+    except (OSError, json.JSONDecodeError, ValidationError) as e:
+        print(f"Error: {e}")
+        return
     print(f"ID: {station.station_id}")
     print(f"Name: {station.name}")
     print(f"Crew: {station.crew_size} people")
@@ -36,9 +43,18 @@ def main() -> None:
     print(f"Status: {status}")
     print("\n========================================")
     print("Expected validation error:")
-    station_data["crew_size"] = 22
+    invalid_path = os.path.join(
+        module_dir, "generated_data", "invalid_stations.json"
+    )
     try:
-        SpaceStation.model_validate(station_data)
+        with open(invalid_path, encoding="utf-8") as file:
+            invalid_stations = json.load(file)
+        invalid_station = random.choice(invalid_stations)
+    except (OSError, json.JSONDecodeError) as e:
+        print(f"Error: {e}")
+        return
+    try:
+        SpaceStation.model_validate(invalid_station)
     except ValidationError as e:
         for err in e.errors():
             print(err["msg"])
