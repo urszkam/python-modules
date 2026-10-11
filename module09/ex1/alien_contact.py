@@ -54,16 +54,18 @@ class AlienContact(BaseModel):
 def main() -> None:
     print("Alien Contact Log Validation")
     print("======================================\n")
-    module_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    data_path = os.path.join(
+    module_dir: str = os.path.dirname(
+        os.path.dirname(os.path.realpath(__file__))
+    )
+    data_path: str = os.path.join(
         module_dir, "generated_data", "alien_contacts.json"
     )
     try:
         with open(data_path, encoding="utf-8") as file:
-            reports = json.load(file)
+            reports: list[dict[str,str]] = json.load(file)
 
-        contact_data = random.choice(reports)
-        ac = AlienContact.model_validate(contact_data)
+        contact_data: dict[str,str] = random.choice(reports)
+        ac: AlienContact = AlienContact.model_validate(contact_data)
     except (OSError, json.JSONDecodeError, ValidationError) as e:
         print(f"Error: {e}")
         return
@@ -78,13 +80,13 @@ def main() -> None:
     print("\n======================================")
     print("Expected validation error:")
 
-    invalid_path = os.path.join(
+    invalid_path: str = os.path.join(
         module_dir, "generated_data", "invalid_contacts.json"
     )
     try:
         with open(invalid_path, encoding="utf-8") as file:
-            invalid_reports = json.load(file)
-        invalid_contact = random.choice(invalid_reports)
+            invalid_reports: list[dict[str,str]] = json.load(file)
+        invalid_contact: dict[str,str] = random.choice(invalid_reports)
     except (OSError, json.JSONDecodeError) as e:
         print(f"Error: {e}")
         return

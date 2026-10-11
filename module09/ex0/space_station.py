@@ -21,19 +21,21 @@ class SpaceStation(BaseModel):
 def main() -> None:
     print("Space Station Data Validation")
     print("========================================\n")
-    print("Valid station created:")
-    module_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    data_path = os.path.join(
+    module_dir: str = os.path.dirname(
+        os.path.dirname(os.path.realpath(__file__))
+    )
+    data_path: str = os.path.join(
         module_dir, "generated_data", "space_stations.json"
     )
     try:
         with open(data_path, encoding="utf-8") as file:
-            stations = json.load(file)
-        station_data = random.choice(stations)
-        station = SpaceStation.model_validate(station_data)
+            stations: list[dict[str, str]] = json.load(file)
+        station_data: dict[str, str] = random.choice(stations)
+        station: SpaceStation = SpaceStation.model_validate(station_data)
     except (OSError, json.JSONDecodeError, ValidationError) as e:
         print(f"Error: {e}")
         return
+    print("Valid station created:")
     print(f"ID: {station.station_id}")
     print(f"Name: {station.name}")
     print(f"Crew: {station.crew_size} people")
@@ -43,13 +45,13 @@ def main() -> None:
     print(f"Status: {status}")
     print("\n========================================")
     print("Expected validation error:")
-    invalid_path = os.path.join(
+    invalid_path: str = os.path.join(
         module_dir, "generated_data", "invalid_stations.json"
     )
     try:
         with open(invalid_path, encoding="utf-8") as file:
-            invalid_stations = json.load(file)
-        invalid_station = random.choice(invalid_stations)
+            invalid_stations: list[dict[str, str]] = json.load(file)
+        invalid_station: dict[str, str] = random.choice(invalid_stations)
     except (OSError, json.JSONDecodeError) as e:
         print(f"Error: {e}")
         return

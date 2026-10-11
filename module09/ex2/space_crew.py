@@ -56,7 +56,9 @@ class SpaceMission(BaseModel):
     @model_validator(mode="after")
     def validate_crew_experience(self) -> SpaceMission:
         crew_size = len(self.crew)
-        experienced_crew = [m for m in self.crew if m.years_experience >= 5]
+        experienced_crew: list[CrewMember] = [
+            mem for mem in self.crew if mem.years_experience >= 5
+        ]
         experienced_size = len(experienced_crew)
         if self.duration_days > 365 and experienced_size * 2 < crew_size:
             raise ValueError("Long missions (> 365 days) need 50% "
@@ -74,16 +76,18 @@ class SpaceMission(BaseModel):
 def main() -> None:
     print("Space Mission Crew Validation")
     print("=========================================")
-    module_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    data_path = os.path.join(
+    module_dir: str = os.path.dirname(
+        os.path.dirname(os.path.realpath(__file__))
+    )
+    data_path: str = os.path.join(
         module_dir, "generated_data", "space_missions.json"
     )
     try:
         with open(data_path, encoding="utf-8") as file:
-            missions = json.load(file)
+            missions: list[dict[str,str]] = json.load(file)
 
-        mission_data = random.choice(missions)
-        mission = SpaceMission.model_validate(mission_data)
+        mission_data: dict[str,str] = random.choice(missions)
+        mission: SpaceMission = SpaceMission.model_validate(mission_data)
     except (OSError, json.JSONDecodeError, ValidationError) as e:
         print(f"Error: {e}")
         return
