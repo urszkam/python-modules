@@ -14,3 +14,7 @@ env/
 .DS_Store
 .idea/
 .vscode/
+
+generated_data/
+data_exporter.py
+data_generator.py
